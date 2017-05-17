@@ -1,7 +1,9 @@
 (ns arduinofun.core
   (:gen-class)
+  (:require [clojure.java.io :as io])
   (:use [overtone.live]
-        [overtone.inst.piano]))
+        [overtone.inst.piano]
+        [serial.core :as serial]))
 
   
 
@@ -13,7 +15,6 @@
 
 (def usb-tty "tty.usbmodem1421")
 (def usb-t "cu.usbmodem1421")
-
 
 
 
@@ -35,14 +36,19 @@
   (println 0)
   (piano (note :c3)))
 
+(defn do-stuff [note]
+  (println note) 
+  (demo 0.2 (pan2 (sin-osc note))))  
+
+
 (defn funfun [x]
-  (cond 
-    (= x 48) (println 0)
-    (= x 49) (do-stuff)
-    :default nil)) 
-#_(require '[serial.core :as serial])
-#_(def port (serial/open usb-tty :baud-rate 9600))
-#_(serial/listen! port (fn [stream] (swap! buffers-atom concat (exhaust-stream stream n))))
-#_(serial/listen! port (fn [stream] (funfun (.read stream))))
+  (if (and x (not(= x "")))
+    (let [note (Integer/parseInt x)
+          scaled (* note 10)]
+          
+      (if (> note 0)
+        (do-stuff scaled))))) 
 
-
+(defn do! [] 
+  (let [port (serial/open usb-tty :baud-rate 9600)]
+    (serial/listen! port (fn [stream] (funfun (.readLine (io/reader stream)))))))   
