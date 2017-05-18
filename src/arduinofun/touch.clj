@@ -1,6 +1,7 @@
 (ns arduinofun.core
   (:gen-class)
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str])
   (:use [overtone.live]
         [overtone.inst.piano]
         [serial.core :as serial]))
@@ -40,15 +41,26 @@
   (println note) 
   (demo 0.2 (pan2 (sin-osc note))))  
 
-
 (defn funfun [x]
   (if (and x (not(= x "")))
     (let [note (Integer/parseInt x)
-          scaled (* note 10)]
-          
+          scaled (* note 50)]
       (if (> note 0)
-        (do-stuff scaled))))) 
+        (do-stuff scaled)))))
 
+(defn play-me! [something-something]
+  (let [one (first something-something)
+        another (second something-something)]
+    (funfun one)
+    (funfun another)))
+  
+(defn autobahn [x]  
+  (if (and x (not(= x "")))
+    (do 
+      (println x)
+      (let [baby (str/split x #"\t+")]
+        (play-me! baby)))))
+        
 (defn do! [] 
   (let [port (serial/open usb-tty :baud-rate 9600)]
-    (serial/listen! port (fn [stream] (funfun (.readLine (io/reader stream)))))))   
+    (serial/listen! port (fn [stream] (autobahn (.readLine (io/reader stream)))))))   
