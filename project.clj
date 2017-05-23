@@ -5,7 +5,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [overtone "0.10.1"]
-                 [clj-serial "2.0.3"]]
+                 [clj-serial "2.0.3"]
+                 [org.clojure/math.numeric-tower "0.0.4"]]
                  
   :main ^:skip-aot arduinofun.core
   :target-path "target/%s"
