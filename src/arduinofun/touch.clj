@@ -4,42 +4,10 @@
             [clojure.string :as str])
   (:use [overtone.live]
         [overtone.inst.piano]
-        [serial.core :as serial]))
+        [serial.core :as serial]
+        [serial.util :as sutil]))
 
-  
-
-
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
-
-(def usb-tty "tty.usbmodem1421")
-(def usb-t "cu.usbmodem1421")
-
-
-
-(def buffers-atom (atom []))
-(def n 1024) ; 1 KiB
-
-(defn exhaust-stream
-  ([stream n] (exhaust-stream stream n '()))
-  ([stream n buf-so-far]
-   (let [new-buf (byte-array n)
-         read-len (.read stream new-buf)
-         buf-with-new (concat buf-so-far (take read-len new-buf))]
-     
-     (if (< read-len n)
-       buf-with-new
-       (recur stream n buf-with-new)))))
-
-(defn do-stuff []
-  (println 0)
-  (piano (note :c3)))
-
-(defn do-stuff [note]
-  (println note) 
-  (demo 0.2 (pan2 (sin-osc note))))  
+(defn do-stuff [note]  (println note)   (demo 0.2 (pan2 (sin-osc note)))) 
 
 (defn funfun [x]
   (if (and x (not(= x "")))
@@ -50,17 +18,28 @@
 
 (defn play-me! [something-something]
   (let [one (first something-something)
-        another (second something-something)]
+        another (second something-something)
+        third (nth something-something 2)
+        fourth (nth something-something 3)
+        fifth (nth something-something 4)
+        sixth (nth something-something 5)]
     (funfun one)
-    (funfun another)))
-  
+    (funfun another)
+    (funfun third)
+    (funfun fourth)
+    (funfun fifth)
+    (funfun sixth)))
+
 (defn autobahn [x]  
   (if (and x (not(= x "")))
     (do 
       (println x)
       (let [baby (str/split x #"\t+")]
+        (println baby)
         (play-me! baby)))))
         
+(def usb-tty-m "tty.usbmodem1421")
+(def usb-tty-c "tty.usbmodem1411")
 (defn do! [] 
-  (let [port (serial/open usb-tty :baud-rate 9600)]
-    (serial/listen! port (fn [stream] (autobahn (.readLine (io/reader stream)))))))   
+  (let [port (serial/open usb-tty-m :baud-rate 9600)]
+    (serial/listen! port (fn [stream] (autobahn (.readLine (io/reader stream))))))) 
